@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>地图缓存</title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 600px;
+            width: 600px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+    <div id="opt">
+        <div id="mapURLDiv">
+            <label for="mapUrl">地图源:</label>
+            <select id="mapUrl" name="mapUrl">
+                <option value="googleMap" >谷歌地图</option>
+                <option value="AMap" selected>高德地图</option>
+            </select>
+        </div>
+        <div id="mapURLChooseDiv">
+            <label for="mapType">地图类型:</label>
+            <select id="mapType" name="mapType">
+                <option value="1" >卫星图</option>
+                <option value="2" selected>路线图</option>
+            </select>
+            <br>
+            <label for="w3review">更多参数：</label>
+            <textarea id="w3review" placeholder="123123" name="w3review" rows="4" cols="50">
+            </textarea>
+            <br>
+        </div>
+        <input id="setMapProp" type="button" value="提交">
+    </div>
+    <!-- 导入arcgis -->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.22/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.22/"></script>
+    <!-- 引入jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/index.js"></script>
+</body>
+
+</html>
