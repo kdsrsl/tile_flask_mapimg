@@ -1,7 +1,6 @@
 import json
 import os
 
-import requests
 from flask import Blueprint, Response, request
 
 from flaskr.setting import setting
@@ -116,20 +115,32 @@ def setMapList():
     else:
         try:
             setting.global_mapURLHeaders = json.loads(httpHeaders)
+            if not isinstance(setting.global_mapURLHeaders, dict):
+                setting.global_mapURLHeaders = None
+                res["code"] = 400
+                res["msg"] = '请求头参数错误，请设置为json格式；例如：{"Content-Type":"application/json"}'
+                return res
         except json.JSONDecodeError:
+            setting.global_mapURLHeaders = None
             res["code"] = 400
-            res["msg"] = "请求头参数错误，请设置为json格式；例如：{'Content-Type':'application/json'}"
-            return
+            res["msg"] = '请求头参数错误，请设置为json格式；例如：{"Content-Type":"application/json"}'
+            return res
 
     if DataCheckUtils.dataCheckNone(httpProxies) is None:
         setting.global_mapURLProxies = None
     else:
         try:
             setting.global_mapURLProxies = json.loads(httpProxies)
+            if not isinstance(setting.global_mapURLProxies, dict):
+                setting.global_mapURLProxies = None
+                res["code"] = 400
+                res["msg"] = '代理端口参数错误，请设置为json格式；例如：{"http":"http://127.0.0.1:1234"}'
+                return res
         except json.JSONDecodeError:
+            setting.global_mapURLProxies = None
             res["code"] = 400
-            res["msg"] = "代理端口参数错误，请设置为json格式；例如：{'http':'http://127.0.0.1:1234'}"
-            return
+            res["msg"] = '代理端口参数错误，请设置为json格式；例如：{"http":"http://127.0.0.1:1234"}'
+            return res
 
     # setting.global_mapURLHeaders = json.loads(httpHeaders)
     # setting.global_mapURLProxies = json.loads(httpProxies)
@@ -154,6 +165,8 @@ def currentMapSetting():
             "mapURLHttpParameter": setting.global_mapURLHttpParameter,
             "mapURLHeaders": setting.global_mapURLHeaders,
             "mapURLProxies": setting.global_mapURLProxies
+            # "mapURLHeaders": json.dump(setting.global_mapURLHeaders),
+            # "mapURLProxies": json.dump(setting.global_mapURLProxies)
         }
     }
 

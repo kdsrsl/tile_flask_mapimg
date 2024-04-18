@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 global_mapList = {
     "data": {
         "mapURLValue": ["googleMap","AMap"],
@@ -30,10 +31,7 @@ global_mapURLStyle = global_mapList["data"][global_mapURLValue]["mapTypeValue"][
 global_mapURLhl = None
 global_mapURLgl = None
 global_mapURLHttpParameter = "&a=1&b=2"
-global_mapURLHeaders = "123;123,1321"
-global_mapURLProxies = "{" \
-                       "asdh:123", \
-                       "asd3:432" \
-                       "}"
+global_mapURLHeaders = None  # {"Content-Type":"application/json"}
+global_mapURLProxies = {"http": "http://127.0.0.1:1234"}
 
 

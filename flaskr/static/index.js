@@ -1,6 +1,6 @@
 let view;
 let map;
-let jianyueTileLayer;
+let myTileLayer;
 let refreshMapTileFunction;
 
 //使用arcgis.js
@@ -81,7 +81,7 @@ require([
 //    let centerPoint = [116, 39]; //大概是北京的经纬度
     let centerPoint = [113.08755916595523,28.251818487944462]; //大概是北京的经纬度
     // 创建一个瓦片图层实例
-    jianyueTileLayer = new TintLayer({
+    myTileLayer = new TintLayer({
 //      urlTemplate: "http://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
       urlTemplate: "/mapImg/{z}/{x}/{y}",
       title: "高德",
@@ -92,7 +92,7 @@ require([
     map = new Map({
 //        basemap: "osm" //查看地图的模式，官方还有其他的模式
 //            basemap:  //查看地图的模式，官方还有其他的模式
-            layers : [jianyueTileLayer]
+            layers : [myTileLayer]
     });
     //3D容器
      view = new MapView({
@@ -105,16 +105,16 @@ require([
     refreshMapTileFunction = function refreshMapTile(){
         console.log("刷新。。。")
         // 移除瓦片
-//      map.layers.pop(jianyueTileLayer)
-        map.remove(jianyueTileLayer)
-        jianyueTileLayer = new TintLayer({
+//      map.layers.pop(myTileLayer)
+        map.remove(myTileLayer)
+        myTileLayer = new TintLayer({
           urlTemplate: "/mapImg/{z}/{x}/{y}",
           title: "高德",
         });
-        map.add(jianyueTileLayer)
+        map.add(myTileLayer)
 
         // 加入瓦片，请求瓦片地图是同一个，但是后端已经改变了
-//        map.layers.push(jianyueTileLayer)
+//        map.layers.push(myTileLayer)
     }
 })
 
@@ -190,8 +190,8 @@ function renderMapUrlSelectionDiv(currentMapSet,mapList){
 
     // 监听变化
     mapUrl.change(function(){
-    // 当选项改变时，这里的代码会被执行
-        alert('Selected value: ' + $(this).val());
+        // 当选项改变时，这里的代码会被执行
+//        alert('Selected value: ' + $(this).val());
         if($(this).val() == "AMap"){
             renderMapURLChooseDivAMap(null, mapList["AMap"])
         }else if ($(this).val() == "googleMap"){
@@ -206,7 +206,7 @@ function renderMapURLChooseDiv(currentMapSet,mapList){
     if(currentMapSet["mapURLValue"] == "AMap"){
         renderMapURLChooseDivAMap(currentMapSet,mapList["AMap"])
     }else if (currentMapSet["mapURLValue"] == "googleMap"){
-        renderMapURLChooseDivAMap(currentMapSet,mapList["googleMap"])
+        renderMapURLChooseDivGoogleMap(currentMapSet,mapList["googleMap"])
     }
 }
 // 渲染google选择
@@ -310,7 +310,7 @@ function renderMapURLChooseDivComm(currentMapSet,mapList){
     let textareaHtml = ""
     if(currentMapSet!=null
         &&currentMapSet["mapURLProxies"]!=null){
-        textareaHtml = "<textarea id='httpProxies' name='httpProxies' rows='4' cols='50'>"+currentMapSet["mapURLProxies"]+"</textarea>"
+        textareaHtml = "<textarea id='httpProxies' name='httpProxies' rows='4' cols='50'>"+JSON.stringify(currentMapSet["mapURLProxies"])+"</textarea>"
     }else{
         textareaHtml = "<textarea id='httpProxies' name='httpProxies' rows='4' cols='50'></textarea>"
     }
@@ -322,7 +322,7 @@ function renderMapURLChooseDivComm(currentMapSet,mapList){
     textareaHtml = ""
     if(currentMapSet!=null
         &&currentMapSet["mapURLHeaders"]!=null){
-        textareaHtml = "<textarea id='httpHeaders' name='httpHeaders' rows='4' cols='50'>"+currentMapSet["mapURLHeaders"]+"</textarea>"
+        textareaHtml = "<textarea id='httpHeaders' name='httpHeaders' rows='4' cols='50'>"+JSON.stringify(currentMapSet["mapURLHeaders"])+"</textarea>"
     }else{
         textareaHtml = "<textarea id='httpHeaders' name='httpHeaders' rows='4' cols='50'></textarea>"
     }
@@ -360,12 +360,16 @@ $("#setMapProp").click(function(){
         dataType: 'json', // 期望从服务器返回的数据类型
         success: function(response) {
             console.log('/mapTile/setMapList-Response:', response);
-            refreshMapTileFunction()
+            if(response["code"]!=200){
+                alert('/mapTile/setMapList-Error:'+response["msg"]);
+            }else{
+                refreshMapTileFunction()
+            }
         },
         error: function(xhr, status, error) {
             // 请求失败时的回调函数
             console.error('Error:', error);
-            alert('/mapTile/setMapList-Error:', error);
+            alert('/mapTile/setMapList-Error:'+error);
         }
     });
 
