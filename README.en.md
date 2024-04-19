@@ -17,6 +17,6 @@ Just run the app.py file, or you can modify the port number from the app.py file
 
 #### Interface display
 
-
+![frontEnd](flaskr/static/frontEnd.png)
 
 Personal blog link: https://blog.csdn.net/qq_45062700?type=blog
