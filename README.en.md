@@ -1,38 +1,22 @@
 # flask-mapimg
 
-#### Description
-可自动缓存地图瓦片，保证项目下次加载更迅速
-后端使用python flask
-前端地图使用 arcgis.js
+### Introduction
+Map tiles can be automatically cached to ensure that the project will be loaded more quickly next time.
+Back-end uses python flask.
+The front-end map uses arcgis.js
 
-#### Software Architecture
+#### Software architecture
 Software architecture description
+Front-end use: native HTML, CSS, JavaScript, jQuery 3.6.0 Map control: arcgis.js 4.22 version.
 
-#### Installation
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Instructions
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+The backend uses python 3.9.4, flask 3.0.3, Requests 2.31.0, FLASK-Socket IO 5.3.6.
 
 
-#### Gitee Feature
+#### Installation tutorial
+Just run the app.py file, or you can modify the port number from the app.py file. The default is port 8087.
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+#### Interface display
+
+
+
+Personal blog link: https://blog.csdn.net/qq_45062700?type=blog
