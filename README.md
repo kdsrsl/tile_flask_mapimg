@@ -18,7 +18,7 @@
 
 #### 界面展示
 
-
+![frontEnd](flaskr/static/frontEnd.png)
 
 
 个人博客链接：https://blog.csdn.net/qq_45062700?type=blog
