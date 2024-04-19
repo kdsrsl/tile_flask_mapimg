@@ -78,8 +78,8 @@ require([
       },
     });
 
-//    let centerPoint = [116, 39]; //大概是北京的经纬度
-    let centerPoint = [113.08755916595523,28.251818487944462]; //大概是北京的经纬度
+    let centerPoint = [116.404177,39.909651]; //大概是北京天安门的经纬度
+
     // 创建一个瓦片图层实例
     myTileLayer = new TintLayer({
 //      urlTemplate: "http://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
@@ -90,8 +90,6 @@ require([
 
     //底层
     map = new Map({
-//        basemap: "osm" //查看地图的模式，官方还有其他的模式
-//            basemap:  //查看地图的模式，官方还有其他的模式
             layers : [myTileLayer]
     });
     //3D容器
@@ -103,18 +101,12 @@ require([
     });
     // 刷新瓦片
     refreshMapTileFunction = function refreshMapTile(){
-        console.log("刷新。。。")
-        // 移除瓦片
-//      map.layers.pop(myTileLayer)
         map.remove(myTileLayer)
         myTileLayer = new TintLayer({
           urlTemplate: "/mapImg/{z}/{x}/{y}",
           title: "高德",
         });
         map.add(myTileLayer)
-
-        // 加入瓦片，请求瓦片地图是同一个，但是后端已经改变了
-//        map.layers.push(myTileLayer)
     }
 })
 
@@ -144,7 +136,7 @@ function getCurrentMapSetting(){
 //获取服务器可以选择的Map类型
 function getMapList(currentMapSet){
     $.ajax({
-        url: '/mapTile/mapList', // 替换为你的API端点
+        url: '/mapTile/mapList',
         type: 'GET', // 请求类型
         dataType: 'json', // 期望从服务器返回的数据类型
         success: function(response) {
