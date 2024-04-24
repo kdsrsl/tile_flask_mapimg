@@ -100,7 +100,7 @@ require([
         center: centerPoint //中心点(可以取小数) ，这里设置的北京
     });
     // 刷新瓦片
-    refreshMapTileFunction = function refreshMapTile(){
+    refreshMapTileFunction = function (){
         map.remove(myTileLayer)
         myTileLayer = new TintLayer({
           urlTemplate: "/mapImg/{z}/{x}/{y}",
@@ -188,17 +188,21 @@ function renderMapUrlSelectionDiv(currentMapSet,mapList){
             renderMapURLChooseDivAMap(null, mapList["AMap"])
         }else if ($(this).val() == "googleMap"){
             renderMapURLChooseDivGoogleMap(null, mapList["googleMap"])
+        }else if ($(this).val() == "customMap"){
+            renderMapURLChooseDivCoustomMap(null, mapList["customMap"])
         }
     });
 
     renderMapURLChooseDiv(currentMapSet,mapList)
 }
-// 渲染地图参数选择框
+// 渲染地图参数选择框,初次渲染
 function renderMapURLChooseDiv(currentMapSet,mapList){
     if(currentMapSet["mapURLValue"] == "AMap"){
         renderMapURLChooseDivAMap(currentMapSet,mapList["AMap"])
     }else if (currentMapSet["mapURLValue"] == "googleMap"){
         renderMapURLChooseDivGoogleMap(currentMapSet,mapList["googleMap"])
+    }else if (currentMapSet["mapURLValue"] == "customMap"){
+        renderMapURLChooseDivCoustomMap(currentMapSet, mapList["customMap"])
     }
 }
 // 渲染google选择
@@ -259,9 +263,95 @@ function renderMapURLChooseDivAMap(currentMapSet,mapListAMap){
     console.log("AMAP===",currentMapSet,mapListAMap)
     renderMapURLChooseDivComm(currentMapSet,mapListAMap)
 }
+//渲染自定义Map选择
+function renderMapURLChooseDivCoustomMap(currentMapSet,mapListCoustomMap){
+    //currentMapSet 当前选择的
+    //mapListAMap所有选择的值
+    let mapURLChooseDiv = $("#mapURLChooseDiv")
+    mapURLChooseDiv.empty()
+
+    let labelHtml = "<label for='mapType'>地图类型:</label>"
+    mapURLChooseDiv.append(labelHtml)
+    let selectHtmlStart = "<select id='mapType' name='mapType'>"
+    let selectHtmlEnd = "</select>"
+    mapURLChooseDiv.append(selectHtmlStart)
+    mapURLChooseDiv.append(selectHtmlEnd)
+
+    let mapType = $("#mapType")
+    for(let i = 0; i < mapListCoustomMap["mapTypeValue"].length; i++){
+        let optHtml;
+        if(currentMapSet!=null
+        &&currentMapSet["mapURLStyle"]!=null
+        &&currentMapSet["mapURLStyle"] === mapListCoustomMap["mapTypeValue"][i]){
+            optHtml = "<option selected value='"+mapListCoustomMap["mapTypeValue"][i]+"' >"+mapListCoustomMap["mapTypeValue"][i]+"</option>"
+        }else{
+            optHtml = "<option value='"+mapListCoustomMap["mapTypeValue"][i]+"' >"+mapListCoustomMap["mapTypeValue"][i]+"</option>"
+        }
+        mapType.append(optHtml)
+    }
+    mapURLChooseDiv.append("<br>")
+    //========上传============
+
+
+    renderMapUploadDivCoustomMap(mapListCoustomMap)
+
+    //============提交上传，完成后，maplist要重新渲染========
+}
+
+//渲染上传自定义上传
+function renderMapUploadDivCoustomMap(mapListCoustomMap){
+    let opt = $("#opt")
+    let uploadMapDivHtml = "<div id='uploadMapDiv'></div>"
+    opt.append(uploadMapDivHtml)
+
+    let uploadMapDiv = $("#uploadMapDiv")
+    let formAction = "/mapImg/upload"
+    let formHtml = "<form id='uploadForm' action='"+formAction+"' method='post' enctype='multipart/form-data'></form>"
+    uploadMapDiv.append("<hr>")
+    uploadMapDiv.append(formHtml);
+
+    //1.选择合并到那个地图类型中，可以不合并，新建一个地图类型
+    let uploadForm = $("#uploadForm")
+    let labelHtml = "<label for='uploadMapType'>是否合并地图类型:</label>"
+    uploadForm.append(labelHtml)
+    let selectHtml = "<select id='uploadMapType' name='uploadMapType'></select>"
+    uploadForm.append(selectHtml)
+
+    let uploadMapType = $("#uploadMapType")
+    let optHtml = "<option value=''>新地图类型</option>"
+    uploadMapType.append(optHtml)
+    for(let i = 0; i < mapListCoustomMap["mapTypeValue"].length; i++){
+        let optHtml = "<option value='"+mapListCoustomMap["mapTypeValue"][i]+"' >合并"+mapListCoustomMap["mapTypeValue"][i]+"类型</option>"
+        uploadMapType.append(optHtml)
+    }
+
+    //2.压缩包
+    let inputUploadHtml = '<br><br><label for="file-input">选择资源压缩包：</label>';
+    let acceptFileType = "";
+//    for(let zipType of mapListCoustomMap["zipTypes"]){
+//        acceptFileType+=zipType+","
+//    }
+    for(let index in mapListCoustomMap["zipTypes"]){
+        if(index == mapListCoustomMap["zipTypes"].length-1){
+            acceptFileType+=mapListCoustomMap["zipTypes"][index]
+        }else{
+            acceptFileType+=mapListCoustomMap["zipTypes"][index]+","
+        }
+    }
+
+    inputUploadHtml += '<input type="file" id="file-input" name="file" accept="'+acceptFileType+'">';
+    uploadForm.append(inputUploadHtml)
+
+    let submitBtn = '<br><br><button type="submit">上传文件</button>';
+    uploadForm.append(submitBtn)
+}
 
 
 function renderMapURLChooseDivComm(currentMapSet,mapList){
+    let uploadMapDiv = $("#uploadMapDiv")
+    if (uploadMapDiv){
+        uploadMapDiv.empty()
+    }
     let mapURLChooseDiv = $("#mapURLChooseDiv")
     mapURLChooseDiv.empty()
 

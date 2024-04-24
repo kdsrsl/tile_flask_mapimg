@@ -12,7 +12,7 @@ mapTile = Blueprint('mapTile', __name__, url_prefix='/')
 
 @mapTile.route("/mapImg/<z>/<x>/<y>")
 def mapImg(x, y, z):
-    imgTypes = ["jpeg", "png", "jpg"]
+    imgTypes = setting.global_imgTypes
     mapURLValue = setting.global_mapURLValue
     mapURLStyle = setting.global_mapURLStyle
     LOCAL_IMAGE_CACHE_DIR = "./map/" + mapURLValue + "/" + mapURLStyle + "/" + str(z) + "/" + str(x) + "/"
