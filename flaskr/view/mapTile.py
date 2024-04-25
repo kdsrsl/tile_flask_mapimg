@@ -1,13 +1,46 @@
 import json
 import os
 
-from flask import Blueprint, Response, request
+from flask import Blueprint, Response, request, flash
+from werkzeug.utils import secure_filename
 
 from flaskr.setting import setting
 from flaskr.utils import DataCheckUtils
 from flaskr.utils.MapDownloadUtils import MapDownloadUtils
+from flaskr.utils import MyFileUtils
 
 mapTile = Blueprint('mapTile', __name__, url_prefix='/')
+
+
+@mapTile.route("/mapImg/upload", methods=["POST"])
+def upload():
+    res = {
+        "code": 500,
+        "data": "",
+        "msg": ""
+    }
+    # 是不是一个file
+    if 'mapFile' not in request.files:
+        flash('No file part')
+        res["code"] = 500
+        res["msg"] = "请上传的文件"
+        return res
+    mapFile = request.files['mapFile']
+    # If the user does not select a file, the browser submits an
+    # empty file without a filename.
+    if mapFile.filename == '':
+        flash('No selected file')
+        res["code"] = 500
+        res["msg"] = "请上传的文件"
+        return res
+    if mapFile and MyFileUtils.allowed_file(mapFile.filename, setting.global_zipTypes):
+        # TODO 解决中文名称文件上传问题
+        filename = secure_filename(mapFile.filename)
+        mapFile.save(os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, filename))
+        res["code"] = 200
+        res["msg"] = "上传成功"
+        return res
+    return res
 
 
 @mapTile.route("/mapImg/<z>/<x>/<y>")
@@ -41,22 +74,29 @@ def mapImg(x, y, z):
     httpHeaders = setting.global_mapURLHeaders
     # 下载地图前，参考用户设置的值
     if mapUrl.__eq__("googleMap"):
-        lyrs = DataCheckUtils.dataCheckNone(setting.global_mapURLStyle,"s")
-        hl = DataCheckUtils.dataCheckNone(setting.global_mapURLhl,"zh-CN")
-        gl = DataCheckUtils.dataCheckNone(setting.global_mapURLgl,"cn")
+        lyrs = DataCheckUtils.dataCheckNone(setting.global_mapURLStyle, "s")
+        hl = DataCheckUtils.dataCheckNone(setting.global_mapURLhl, "zh-CN")
+        gl = DataCheckUtils.dataCheckNone(setting.global_mapURLgl, "cn")
         # httpParameter = None
         headers = httpHeaders
         proxies = httpProxies
 
-        savePathGoogle, urlStrGoogle, contentTypeGoogle = MapDownloadUtils.googleMapDownload(x, y, z,lyrs=lyrs, hl=hl, gl=gl, httpParameter=httpParameter, headers=headers, proxies=proxies)
+        savePathGoogle, urlStrGoogle, contentTypeGoogle = MapDownloadUtils.googleMapDownload \
+            (x, y, z, lyrs=lyrs, hl=hl,
+             gl=gl,
+             httpParameter=httpParameter,
+             headers=headers,
+             proxies=proxies)
         savePath = savePathGoogle
         urlStr = urlStrGoogle
         contentType = contentTypeGoogle
     elif mapUrl.__eq__("AMap"):
-        style = DataCheckUtils.dataCheckNone(setting.global_mapURLStyle,"6")
+        style = DataCheckUtils.dataCheckNone(setting.global_mapURLStyle, "6")
         headers = httpProxies
         proxies = httpHeaders
-        savePathAMap, urlStrAMap, contentTypeAMap = MapDownloadUtils.AMapDownload(x, y, z,style=style, httpParameter=httpParameter, headers=headers, proxies=proxies)
+        savePathAMap, urlStrAMap, contentTypeAMap = MapDownloadUtils.AMapDownload(x, y, z, style=style,
+                                                                                  httpParameter=httpParameter,
+                                                                                  headers=headers, proxies=proxies)
         savePath = savePathAMap
         urlStr = urlStrAMap
         contentType = contentTypeAMap
@@ -171,6 +211,3 @@ def currentMapSetting():
     }
 
     return res
-
-
-

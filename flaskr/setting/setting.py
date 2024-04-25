@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 # 上传压缩包中需要的图片类型
+
 global_imgTypes = ["jpeg", "png", "jpg", "gif", "webp"]
 # 上传压缩包类型
 global_zipTypes = [".gz", ".tar", ".tgz", ".zip", ".rar"]
+
+global_UPLOAD_CUSTOM_MAP_FOLDER = ".\\map\\customMap"
 
 global_mapList = {
     "data": {

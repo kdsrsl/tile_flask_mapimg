@@ -313,16 +313,16 @@ function renderMapUploadDivCoustomMap(mapListCoustomMap){
 
     let uploadMapDiv = $("#uploadMapDiv")
     let formAction = "/mapImg/upload"
-    let formHtml = "<form id='uploadForm' action='"+formAction+"' method='post' enctype='multipart/form-data'></form>"
+//    let formHtml = "<form id='uploadForm' action='"+formAction+"' method='post' enctype='multipart/form-data'></form>"
     uploadMapDiv.append("<hr>")
-    uploadMapDiv.append(formHtml);
+//    uploadMapDiv.append(formHtml);
 
     //1.选择合并到那个地图类型中，可以不合并，新建一个地图类型
-    let uploadForm = $("#uploadForm")
+//    let uploadForm = $("#uploadForm")
     let labelHtml = "<label for='uploadMapType'>是否合并地图类型:</label>"
-    uploadForm.append(labelHtml)
+    uploadMapDiv.append(labelHtml)
     let selectHtml = "<select id='uploadMapType' name='uploadMapType'></select>"
-    uploadForm.append(selectHtml)
+    uploadMapDiv.append(selectHtml)
 
     let uploadMapType = $("#uploadMapType")
     let optHtml = "<option value=''>新地图类型</option>"
@@ -333,7 +333,7 @@ function renderMapUploadDivCoustomMap(mapListCoustomMap){
     }
 
     //2.压缩包
-    let inputUploadHtml = '<br><br><label for="file-input">选择资源压缩包：</label>';
+    let inputUploadHtml = '<br><br><label for="fileMapInput">选择资源压缩包：</label>';
     let acceptFileType = "";
 //    for(let zipType of mapListCoustomMap["zipTypes"]){
 //        acceptFileType+=zipType+","
@@ -346,11 +346,19 @@ function renderMapUploadDivCoustomMap(mapListCoustomMap){
         }
     }
 
-    inputUploadHtml += '<input type="file" id="file-input" name="file" accept="'+acceptFileType+'">';
-    uploadForm.append(inputUploadHtml)
+    inputUploadHtml += '<input type="file" id="fileMapInput" name="fileMapInput" accept="'+acceptFileType+'">';
+    uploadMapDiv.append(inputUploadHtml)
 
-    let submitBtn = '<br><br><button type="submit">上传文件</button>';
-    uploadForm.append(submitBtn)
+//    let submitBtn = '<br><br><button type="submit">上传文件</button>';
+//    uploadForm.append(submitBtn)
+
+    let uploadBtn = '<br><br><button id="uploadBtn" >上传文件</button>';
+    uploadMapDiv.append(uploadBtn)
+
+    $("#uploadBtn").click(function(){
+        uploadMap(mapListCoustomMap["zipTypes"])
+    })
+
 }
 
 
