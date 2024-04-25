@@ -99,6 +99,13 @@ require([
         zoom: 15, //初始地图距离大小
         center: centerPoint //中心点(可以取小数) ，这里设置的北京
     });
+
+    $("#mapLatitude").val(view.center.latitude)
+    $("#mapLongitude").val(view.center.longitude)
+    view.on("drag", function(event){
+        $("#mapLatitude").val(view.center.latitude)
+        $("#mapLongitude").val(view.center.longitude)
+    });
     // 刷新瓦片
     refreshMapTileFunction = function (){
         map.remove(myTileLayer)
@@ -456,3 +463,31 @@ $("#setMapProp").click(function(){
     });
 
 });
+
+
+$("#setMapCenterBtn").click(function(){
+    let setLongitude = parseFloat($("#mapLongitude").val());
+    let setLatitude = parseFloat($("#mapLatitude").val());
+
+    let latitude = view.center.latitude
+    let longitude = view.center.longitude
+
+    let distance = Math.sqrt((setLongitude-longitude)**2 + (setLatitude-latitude)**2)
+    console.log("distance："+distance)
+    let duration = distance/0.1 * 100;
+    duration = duration>3000 ? 3000: duration
+    console.log("duration："+duration)
+    let opts = {
+        duration: duration
+    };
+    // 有过度动画
+    view.goTo({
+        center: [setLongitude, setLatitude],
+//        zoom: 10
+    },opts)
+
+    //无过度动动画
+//    view.set({
+//        center: [parseFloat($("#mapLongitude").val()), parseFloat($("#mapLatitude").val())]
+//    })
+})
