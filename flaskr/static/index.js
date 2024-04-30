@@ -433,16 +433,24 @@ $("#setMapProp").click(function(){
     let mapUrl = $("#mapUrl").val()
     let glType = ""
     let hlType = ""
+    let httpParameter = ""
+    let httpProxies = ""
+    let httpHeaders = ""
     if(mapUrl == "googleMap"){
         glType = $("#glType").val()
         hlType = $("#hlType").val()
     }
+    if(mapUrl != "customMap"){
+        httpParameter = $("#httpParameter").val()
+        httpProxies = $("#httpProxies").val()
+        httpHeaders = $("#httpHeaders").val()
+    }
     let requestData = {
         "mapUrl": mapUrl,
         "mapType": $("#mapType").val(),
-        "httpParameter": $("#httpParameter").val(),
-        "httpProxies": $("#httpProxies").val(),
-        "httpHeaders": $("#httpHeaders").val(),
+        "httpParameter": httpParameter,
+        "httpProxies": httpProxies,
+        "httpHeaders": httpHeaders,
         "glType": glType,
         "hlType": hlType
     }

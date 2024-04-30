@@ -4,6 +4,8 @@
 global_imgTypes = ["jpeg", "png", "jpg", "gif", "webp"]
 # 上传压缩包类型
 global_zipTypes = [".tar", ".tgz", ".zip", ".rar"]
+# global_customMapTypes = ["test1", "test2", "test3"]
+global_customMapTypes = []
 
 global_UPLOAD_CUSTOM_MAP_FOLDER = ".\\map\\customMap"
 
@@ -33,7 +35,7 @@ global_mapList = {
         },
         "customMap": {
             # "alreadyMapTypes": ["test1", "test2", "test3"],  # 这个以用户上传的压缩包命名
-            "mapTypeValue": ["test1", "test2", "test3"],  # 这个以用户上传的压缩包命名
+            "mapTypeValue": global_customMapTypes,  # 这个以用户上传的压缩包命名
             "zipTypes": global_zipTypes,  # 这个以用户上传的压缩包命名
             # 所以它的地址是：
             # mapURLValue="customMap"
@@ -45,7 +47,7 @@ global_mapList = {
     }
 }
 
-global_mapURLValue = global_mapList["data"]["mapURLValue"][2]
+global_mapURLValue = global_mapList["data"]["mapURLValue"][1]
 global_mapURLStyle = global_mapList["data"][global_mapURLValue]["mapTypeValue"][2]
 global_mapURLhl = None
 global_mapURLgl = None
@@ -54,5 +56,3 @@ global_mapURLHeaders = None  # {"Content-Type":"application/json"}
 global_mapURLProxies = {"http": "http://127.0.0.1:1234"}
 # global_customAlreadyMapType = ""
 # global_customAlreadyMapTypes = ["test1", "test2", "test3"]
-
-
