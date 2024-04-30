@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-# 上传压缩包中需要的图片类型
+# 设置最大上传大小为200MB
+global_file_max_length = 200 * 1024 * 1024
 
+# 上传压缩包中需要的图片类型
 global_imgTypes = ["jpeg", "png", "jpg", "gif", "webp"]
 # 上传压缩包类型
 global_zipTypes = [".tar", ".tgz", ".zip", ".rar"]

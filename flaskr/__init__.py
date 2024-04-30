@@ -11,6 +11,7 @@ app.config.from_mapping(
     SECRET_KEY='dev',
     DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
 )
+app.config['MAX_CONTENT_LENGTH'] = setting.global_file_max_length  # 设置最大上传大小
 
 # 创建自定义地图上传文件夹
 os.makedirs(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, exist_ok=True)

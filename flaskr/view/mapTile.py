@@ -2,7 +2,6 @@ import json
 import os
 
 from flask import Blueprint, Response, request, flash
-from werkzeug.utils import secure_filename
 
 from flaskr.setting import setting
 from flaskr.utils import DataCheckUtils
@@ -19,7 +18,7 @@ def upload():
         "data": "",
         "msg": ""
     }
-    # 是不是一个file
+    # 是不是一个file，是否包含mapFile文件字段
     if 'mapFile' not in request.files:
         flash('No file part')
         res["code"] = 500
@@ -33,13 +32,76 @@ def upload():
         res["code"] = 500
         res["msg"] = "请上传的文件"
         return res
+    # 检查是否为压缩包
     if mapFile and MyFileUtils.allowed_file(mapFile.filename, setting.global_zipTypes):
-        # TODO 解决中文名称文件上传问题
-        filename = secure_filename(mapFile.filename)
-        mapFile.save(os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, filename))
+        # 检查文件大小200MB
+        if mapFile.content_length > setting.global_file_max_length:
+            res["code"] = 413
+            res["msg"] = "文件不能超过200MB"
+            return res
+
+        # 解决中文名称文件上传问题
+        filename = MyFileUtils.secure_filename(mapFile.filename)
+        # filename = secure_filename(mapFile.filename)
+        zipPath = os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, filename).__str__()
+        zipPathAbs = os.path.abspath(zipPath)
+        # mapFile.save(os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, filename))
+        mapFile.save(zipPathAbs)
+
+        # 解压
+        uploadMapType = request.form.get("uploadMapType")
+        isExistImgFile = False
+        firstImgFilePath = ""
+        # 当uploadMapType为空时，则为新上传
+        if uploadMapType is '':
+            isExistImgFileTemp, firstImgFilePathTemp = MyFileUtils.checkMapZipFileIncludeImg(zipPathAbs)
+            isExistImgFile = isExistImgFileTemp
+            firstImgFilePath = firstImgFilePathTemp
+            delParentPath = "" # 需要删除的父文件夹
+            if isExistImgFile:
+                firstImgFilePaths = firstImgFilePath.split("/")
+                if len(firstImgFilePaths) == 3:
+                    firstImgFilePaths.insert(0,filename.split(".")[0])
+                else: # 4层，说明有多余的层数，我们需要删除
+                    delParentPath = firstImgFilePaths[0]
+                if firstImgFilePaths[0] in setting.global_customMapTypes:
+                    # 已经存在这个文件夹,这个时候要重命名了
+                    indexTemp = 2
+                    while firstImgFilePaths[0]+"("+str(indexTemp)+")" in setting.global_customMapTypes:
+                        indexTemp = indexTemp+1
+
+                    firstImgFilePaths[0] = firstImgFilePaths[0]+"("+str(indexTemp)+")"
+                    firstImgFilePath = "/".join(firstImgFilePaths)
+
+                # 解压
+                strPath = MyFileUtils.mapFileUnZip2(zipPathAbs, firstImgFilePaths[0])
+                if len(delParentPath) != 0:
+                    # 删除多余的层数
+                    MyFileUtils.childFoldersUpParentPath(strPath+"\\"+delParentPath, True, True)
+
+                setting.global_customMapTypes.append(firstImgFilePaths[0])
+
+
+                print(f"strPath {strPath}")
+                print(f"uploadMapType {uploadMapType}")
+                print(f"firstImgFilePath {firstImgFilePath}")
+                res["code"] = 200
+                res["msg"] = "上传成功"
+                return res
+        else:
+            # 合并现用的文件夹下
+            if uploadMapType in setting.global_customMapTypes:
+                isExistImgFile, firstImgFilePath = MyFileUtils.checkMapZipFileIncludeImg(zipPathAbs)
+                print(f"isExistImgFile {isExistImgFile}")
+                print(f"firstImgFilePath {firstImgFilePath}")
+                print(f"uploadMapType {uploadMapType}")
+            else:
+                res["code"] = 400
+                res["msg"] = "请选择正确的地图类型进行合并"
+                return res
+
         res["code"] = 200
         res["msg"] = "上传成功"
-        return res
     return res
 
 
