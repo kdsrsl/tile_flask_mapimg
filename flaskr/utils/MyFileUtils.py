@@ -83,10 +83,22 @@ def mapFileUnZip(mapFilePath: str, firstImgPath: str, unzipPath=None):
             # 创建根目录文件夹
             pathStr = pathStr + "\\" + filenamePrefix
             os.makedirs(pathStr, exist_ok=True)
-        shutil.unpack_archive(mapFilePath, pathStr)
+        if filename.split(".")[1] == "rar":
+            # 打开RAR文件， 需要添加环境rar解压工具环境变量才能使用
+            with rarfile.RarFile(mapFilePath) as rf:
+                # 解压所有文件到指定目录
+                rf.extractall(path=pathStr)
+        else:
+            shutil.unpack_archive(mapFilePath, pathStr)
         return pathStr
     else:
-        shutil.unpack_archive(mapFilePath, unzipPath)
+        if filename.split(".")[1] == "rar":
+            # 打开RAR文件， 需要添加环境rar解压工具环境变量才能使用
+            with rarfile.RarFile(mapFilePath) as rf:
+                # 解压所有文件到指定目录
+                rf.extractall(path=pathStr)
+        else:
+            shutil.unpack_archive(mapFilePath, unzipPath)
         return unzipPath
 
 
@@ -100,13 +112,19 @@ def mapFileUnZip2(mapFilePath: str, firstImgPath: str):
     # [".tar", ".tgz", ".zip", ".rar"]
     pathIndex = mapFilePath.rindex("\\")
     pathStr = mapFilePath[0:pathIndex]
-    # filename = mapFilePath[pathIndex + 1:]
+    filename = mapFilePath[pathIndex + 1:]
 
     # 创建根目录文件夹
     pathStr = pathStr + "\\" + firstImgPath
     os.makedirs(pathStr, exist_ok=True)
     # 解压
-    shutil.unpack_archive(mapFilePath, pathStr)
+    if filename.split(".")[1] == "rar":
+        # 打开RAR文件， 需要添加环境rar解压工具环境变量才能使用
+        with rarfile.RarFile(mapFilePath) as rf:
+            # 解压所有文件到指定目录
+            rf.extractall(path=pathStr)
+    else:
+        shutil.unpack_archive(mapFilePath, pathStr)
     return pathStr
 
 

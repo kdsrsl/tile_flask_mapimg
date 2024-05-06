@@ -5,7 +5,8 @@ global_file_max_length = 200 * 1024 * 1024
 # 上传压缩包中需要的图片类型
 global_imgTypes = ["jpeg", "png", "jpg", "gif", "webp"]
 # 上传压缩包类型
-global_zipTypes = [".tar", ".tgz", ".zip", ".rar"]
+# global_zipTypes = [".tar", ".tgz", ".zip", ".rar"]
+global_zipTypes = [".zip", ".tar", ".tgz"]
 # global_customMapTypes = ["test1", "test2", "test3"]
 global_customMapTypes = []
 

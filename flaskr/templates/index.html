@@ -13,11 +13,25 @@
             height: 600px;
             width: 600px;
         }
+        #fileuploadDialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 
 </head>
 
 <body>
+    <div id="fileuploadDialog" style="display:none;">
+      文件上传中...
+    </div>
     <div id="viewDiv"></div>
     <br>
     <div>地图中心点：经度：<input id="mapLongitude" value="100" name="mapLongitude">纬度：<input id="mapLatitude" value="100" name="mapLatitude"> <button id="setMapCenterBtn">设置</button></div>

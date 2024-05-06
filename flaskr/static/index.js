@@ -214,7 +214,6 @@ function renderMapURLChooseDiv(currentMapSet,mapList){
 }
 // 渲染google选择
 function renderMapURLChooseDivGoogleMap(currentMapSet,mapListGoogleMap){
-    console.log("GOOGLE===",currentMapSet,mapListGoogleMap)
     //===================
     renderMapURLChooseDivComm(currentMapSet,mapListGoogleMap)
 
@@ -267,7 +266,6 @@ function renderMapURLChooseDivGoogleMap(currentMapSet,mapListGoogleMap){
 }
 // 渲染AMap选择
 function renderMapURLChooseDivAMap(currentMapSet,mapListAMap){
-    console.log("AMAP===",currentMapSet,mapListAMap)
     renderMapURLChooseDivComm(currentMapSet,mapListAMap)
 }
 //渲染自定义Map选择
@@ -308,6 +306,9 @@ function renderMapURLChooseDivCoustomMap(currentMapSet,mapListCoustomMap){
 //渲染上传自定义上传
 function renderMapUploadDivCoustomMap(mapListCoustomMap){
     let opt = $("#opt")
+    if($("#uploadMapDiv")){
+        $("#uploadMapDiv").remove();
+    }
     let uploadMapDivHtml = "<div id='uploadMapDiv'></div>"
     opt.append(uploadMapDivHtml)
 
@@ -489,10 +490,8 @@ $("#setMapCenterBtn").click(function(){
     let longitude = view.center.longitude
 
     let distance = Math.sqrt((setLongitude-longitude)**2 + (setLatitude-latitude)**2)
-    console.log("distance："+distance)
     let duration = distance/0.1 * 100;
     duration = duration>3000 ? 3000: duration
-    console.log("duration："+duration)
     let opts = {
         duration: duration
     };

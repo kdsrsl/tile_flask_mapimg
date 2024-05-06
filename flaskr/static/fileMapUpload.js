@@ -6,9 +6,9 @@ function uploadMap(fileTypes){
         alert("请选择文件上传！")
         return
     }
-    console.log("mapFile.name:"+mapFile.name)
-    console.log("mapFile.size:"+mapFile.size)
-    console.log("mapFile.type:"+mapFile.type)
+//    console.log("mapFile.name:"+mapFile.name)
+//    console.log("mapFile.size:"+mapFile.size)
+//    console.log("mapFile.type:"+mapFile.type)
     //校验文件
     //1 大小 现在200MB
     if(mapFile.size/1024/1024>200){
@@ -29,9 +29,7 @@ function uploadMap(fileTypes){
     if(!isZip){
         alert("请上传压缩包")
     }
-
-    console.log("可以上传文件")
-
+//    console.log("可以上传文件")
     var formData = new FormData();
     formData.append('uploadMapType', $("#uploadMapType").val());
     formData.append('mapFile', mapFile);
@@ -41,6 +39,8 @@ function uploadMap(fileTypes){
 }
 
 function uploadMapPost(formData){
+    $("#fileuploadDialog").show();
+    $("#fileuploadDialog").text("文件上传中...");
     $.ajax({
         url:"/mapImg/upload",
         type:"POST",
@@ -50,10 +50,13 @@ function uploadMapPost(formData){
         dataType: 'json', // 期望从服务器返回的数据类型
         success: function(response) {
             console.log('上传成功:', response);
+            $("#fileuploadDialog").hide();
+            getCurrentMapSetting()
             alert('上传成功:', response)
         },
         error: function(e) {
             console.log('上传失败',e);
+            $("#fileuploadDialog").hide();
             alert('上传失败:', e)
         }
     });
