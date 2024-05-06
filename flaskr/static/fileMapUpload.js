@@ -50,9 +50,11 @@ function uploadMapPost(formData){
         dataType: 'json', // 期望从服务器返回的数据类型
         success: function(response) {
             console.log('上传成功:', response);
+            alert('上传成功:', response)
         },
-        error: function() {
-            console.log('上传失败');
+        error: function(e) {
+            console.log('上传失败',e);
+            alert('上传失败:', e)
         }
     });
 

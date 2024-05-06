@@ -77,12 +77,12 @@ def mapFileUnZip(mapFilePath: str, firstImgPath: str, unzipPath=None):
     pathStr = mapFilePath[0:pathIndex]
     filename = mapFilePath[pathIndex + 1:]
     filenamePrefix = filename.split(".")[0]
-    if len(firstImgPath.split("/")) == 3:
-        # 创建根目录文件夹
-        pathStr = pathStr+"\\"+filenamePrefix
-        os.makedirs(pathStr, exist_ok=True)
 
     if unzipPath is None:
+        if len(firstImgPath.split("/")) == 3:
+            # 创建根目录文件夹
+            pathStr = pathStr + "\\" + filenamePrefix
+            os.makedirs(pathStr, exist_ok=True)
         shutil.unpack_archive(mapFilePath, pathStr)
         return pathStr
     else:
@@ -100,7 +100,7 @@ def mapFileUnZip2(mapFilePath: str, firstImgPath: str):
     # [".tar", ".tgz", ".zip", ".rar"]
     pathIndex = mapFilePath.rindex("\\")
     pathStr = mapFilePath[0:pathIndex]
-    filename = mapFilePath[pathIndex + 1:]
+    # filename = mapFilePath[pathIndex + 1:]
 
     # 创建根目录文件夹
     pathStr = pathStr + "\\" + firstImgPath
@@ -146,6 +146,7 @@ def childFoldersCopyParentFolders(parentFoldersPath: str, childFoldersName: str,
         # 删除原本的子文件夹
         shutil.rmtree(parent_folder_path+"\\"+child_folder_name)
 
+
 def childFoldersUpParentPath(parentFoldersPath: str, isDelChildFolders: bool, isDelParentFolders: bool):
     # 设置父文件夹路径和子文件夹名称
     parent_folder_path = parentFoldersPath
@@ -156,6 +157,7 @@ def childFoldersUpParentPath(parentFoldersPath: str, isDelChildFolders: bool, is
     if isDelParentFolders:
         # 删除原本的文件夹
         shutil.rmtree(parentFoldersPath)
+
 
 def secure_filename(filename: str) -> str:
     r"""Pass it a filename and it will return a secure version of it.  This
@@ -201,25 +203,3 @@ def secure_filename(filename: str) -> str:
         filename = f"_{filename}"
 
     return filename
-
-if __name__ == '__main__':
-    # shutil.move("D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)\\test1", "D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)")
-    # os.rename("D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)\\test1\\1",
-    #         "D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)\\1")
-    # shutil.move("D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)\\test1\\2",
-    #             "D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)\\2")
-    # shutil.copytree("D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)\\test1",
-    #             "D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)")
-
-    childFoldersUpParentPath("D:\\反无5KM\\git\\flask-mapimg\\map\\customMap\\test1(4)\\test1",True,True)
-
-# if __name__ == "__main__":
-#     mapFilePath = "D:\MapTileDownload/331看看.zip"
-#     # mapFilePath = "D:\MapTileDownload/331看看/34324123是是是.zip"
-#     mapFilePath = os.path.abspath(mapFilePath)
-#     isMapFile, nameFile = checkMapZipFileIncludeImg(mapFilePath)
-#     if isMapFile:
-#         unzipPathAdd = mapFileUnZip(mapFilePath, nameFile)
-#         print(f"解压目录 {unzipPathAdd}")
-#     else:
-#         print(f"错误，不是地图瓦片 {mapFilePath}")

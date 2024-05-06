@@ -50,19 +50,19 @@ def upload():
 
         # 解压
         uploadMapType = request.form.get("uploadMapType")
-        isExistImgFile = False
-        firstImgFilePath = ""
+        # isExistImgFile = False
+        # firstImgFilePath = ""
         # 当uploadMapType为空时，则为新上传
-        if uploadMapType is '':
+        if uploadMapType == '':
             isExistImgFileTemp, firstImgFilePathTemp = MyFileUtils.checkMapZipFileIncludeImg(zipPathAbs)
             isExistImgFile = isExistImgFileTemp
             firstImgFilePath = firstImgFilePathTemp
-            delParentPath = "" # 需要删除的父文件夹
+            delParentPath = ""  # 需要删除的父文件夹
             if isExistImgFile:
                 firstImgFilePaths = firstImgFilePath.split("/")
                 if len(firstImgFilePaths) == 3:
-                    firstImgFilePaths.insert(0,filename.split(".")[0])
-                else: # 4层，说明有多余的层数，我们需要删除
+                    firstImgFilePaths.insert(0, filename.split(".")[0])
+                else:  # 4层，说明有多余的层数，我们需要删除
                     delParentPath = firstImgFilePaths[0]
                 if firstImgFilePaths[0] in setting.global_customMapTypes:
                     # 已经存在这个文件夹,这个时候要重命名了
@@ -81,7 +81,6 @@ def upload():
 
                 setting.global_customMapTypes.append(firstImgFilePaths[0])
 
-
                 print(f"strPath {strPath}")
                 print(f"uploadMapType {uploadMapType}")
                 print(f"firstImgFilePath {firstImgFilePath}")
@@ -92,9 +91,31 @@ def upload():
             # 合并现用的文件夹下
             if uploadMapType in setting.global_customMapTypes:
                 isExistImgFile, firstImgFilePath = MyFileUtils.checkMapZipFileIncludeImg(zipPathAbs)
-                print(f"isExistImgFile {isExistImgFile}")
-                print(f"firstImgFilePath {firstImgFilePath}")
-                print(f"uploadMapType {uploadMapType}")
+                if isExistImgFile:
+                    mergePath = os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, uploadMapType).__str__()
+                    mergePathAbs = os.path.abspath(mergePath)
+                    delParentPath = ""  # 需要删除的父文件夹
+                    if isExistImgFile:
+                        firstImgFilePaths = firstImgFilePath.split("/")
+                        if len(firstImgFilePaths) == 3:
+                            firstImgFilePaths.insert(0, filename.split(".")[0])
+                        else:  # 4层，说明有多余的层数，我们需要删除
+                            delParentPath = firstImgFilePaths[0]
+
+                        # 解压
+                        strPath = MyFileUtils.mapFileUnZip(zipPathAbs, firstImgFilePaths[0], mergePathAbs)
+                        if len(delParentPath) != 0:
+                            # 删除多余的层数
+                            MyFileUtils.childFoldersUpParentPath(strPath + "\\" + delParentPath, True, True)
+
+                        res["code"] = 200
+                        res["msg"] = "上传成功"
+                        return res
+
+                else:
+                    res["code"] = 400
+                    res["msg"] = "请选择正确的地图类型进行合并"
+                    return res
             else:
                 res["code"] = 400
                 res["msg"] = "请选择正确的地图类型进行合并"
@@ -127,7 +148,7 @@ def mapImg(x, y, z):
             return response
 
     savePath = None
-    urlStr = None
+    # urlStr = None
     contentType = None
 
     mapUrl = DataCheckUtils.dataCheckNone(setting.global_mapURLValue)
@@ -150,7 +171,7 @@ def mapImg(x, y, z):
              headers=headers,
              proxies=proxies)
         savePath = savePathGoogle
-        urlStr = urlStrGoogle
+        # urlStr = urlStrGoogle
         contentType = contentTypeGoogle
     elif mapUrl.__eq__("AMap"):
         style = DataCheckUtils.dataCheckNone(setting.global_mapURLStyle, "6")
@@ -160,7 +181,7 @@ def mapImg(x, y, z):
                                                                                   httpParameter=httpParameter,
                                                                                   headers=headers, proxies=proxies)
         savePath = savePathAMap
-        urlStr = urlStrAMap
+        # urlStr = urlStrAMap
         contentType = contentTypeAMap
 
     # 无论图片是从缓存读取还是刚下载完，都返回给客户端
