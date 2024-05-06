@@ -21,7 +21,7 @@ def upload():
     # 是不是一个file，是否包含mapFile文件字段
     if 'mapFile' not in request.files:
         flash('No file part')
-        res["code"] = 500
+        res["code"] = 400
         res["msg"] = "请上传的文件"
         return res
     mapFile = request.files['mapFile']
@@ -29,7 +29,7 @@ def upload():
     # empty file without a filename.
     if mapFile.filename == '':
         flash('No selected file')
-        res["code"] = 500
+        res["code"] = 400
         res["msg"] = "请上传的文件"
         return res
     # 检查是否为压缩包
@@ -46,83 +46,56 @@ def upload():
         zipPath = os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, filename).__str__()
         zipPathAbs = os.path.abspath(zipPath)
         # mapFile.save(os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, filename))
+        # 保存上传的压缩文件
         mapFile.save(zipPathAbs)
 
-        # 解压
-        uploadMapType = request.form.get("uploadMapType")
-        # isExistImgFile = False
-        # firstImgFilePath = ""
-        # 当uploadMapType为空时，则为新上传
-        if uploadMapType == '':
-            isExistImgFileTemp, firstImgFilePathTemp = MyFileUtils.checkMapZipFileIncludeImg(zipPathAbs)
-            isExistImgFile = isExistImgFileTemp
-            firstImgFilePath = firstImgFilePathTemp
-            delParentPath = ""  # 需要删除的父文件夹
-            if isExistImgFile:
-                firstImgFilePaths = firstImgFilePath.split("/")
-                if len(firstImgFilePaths) == 3:
-                    firstImgFilePaths.insert(0, filename.split(".")[0])
-                else:  # 4层，说明有多余的层数，我们需要删除
-                    delParentPath = firstImgFilePaths[0]
+        isExistImgFile, firstImgFilePath = MyFileUtils.checkMapZipFileIncludeImg(zipPathAbs)
+        delParentPath = ""  # 需要删除的父文件夹
+        strPath = ""
+        if isExistImgFile:
+            firstImgFilePaths = firstImgFilePath.split("/")
+            if len(firstImgFilePaths) == 3:
+                firstImgFilePaths.insert(0, filename.split(".")[0])
+            else:  # 4层，说明有多余的层数，我们需要删除
+                delParentPath = firstImgFilePaths[0]
+
+            # 获得合并瓦片类型
+            uploadMapType = request.form.get("uploadMapType")
+            # 新增加自定义地图类型
+            if uploadMapType == '':
                 if firstImgFilePaths[0] in setting.global_customMapTypes:
                     # 已经存在这个文件夹,这个时候要重命名了
                     indexTemp = 2
-                    while firstImgFilePaths[0]+"("+str(indexTemp)+")" in setting.global_customMapTypes:
-                        indexTemp = indexTemp+1
-
-                    firstImgFilePaths[0] = firstImgFilePaths[0]+"("+str(indexTemp)+")"
-                    firstImgFilePath = "/".join(firstImgFilePaths)
-
+                    while firstImgFilePaths[0] + "(" + str(indexTemp) + ")" in setting.global_customMapTypes:
+                        indexTemp = indexTemp + 1
+                    firstImgFilePaths[0] = firstImgFilePaths[0] + "(" + str(indexTemp) + ")"
                 # 解压
                 strPath = MyFileUtils.mapFileUnZip2(zipPathAbs, firstImgFilePaths[0])
-                if len(delParentPath) != 0:
-                    # 删除多余的层数
-                    MyFileUtils.childFoldersUpParentPath(strPath+"\\"+delParentPath, True, True)
-
+                # 添加到瓦片类型列表中
                 setting.global_customMapTypes.append(firstImgFilePaths[0])
-
-                print(f"strPath {strPath}")
-                print(f"uploadMapType {uploadMapType}")
-                print(f"firstImgFilePath {firstImgFilePath}")
-                res["code"] = 200
-                res["msg"] = "上传成功"
-                return res
-        else:
-            # 合并现用的文件夹下
-            if uploadMapType in setting.global_customMapTypes:
-                isExistImgFile, firstImgFilePath = MyFileUtils.checkMapZipFileIncludeImg(zipPathAbs)
-                if isExistImgFile:
+            # 合并到已有数据类型
+            else:
+                if uploadMapType in setting.global_customMapTypes:
                     mergePath = os.path.join(setting.global_UPLOAD_CUSTOM_MAP_FOLDER, uploadMapType).__str__()
                     mergePathAbs = os.path.abspath(mergePath)
-                    delParentPath = ""  # 需要删除的父文件夹
-                    if isExistImgFile:
-                        firstImgFilePaths = firstImgFilePath.split("/")
-                        if len(firstImgFilePaths) == 3:
-                            firstImgFilePaths.insert(0, filename.split(".")[0])
-                        else:  # 4层，说明有多余的层数，我们需要删除
-                            delParentPath = firstImgFilePaths[0]
-
-                        # 解压
-                        strPath = MyFileUtils.mapFileUnZip(zipPathAbs, firstImgFilePaths[0], mergePathAbs)
-                        if len(delParentPath) != 0:
-                            # 删除多余的层数
-                            MyFileUtils.childFoldersUpParentPath(strPath + "\\" + delParentPath, True, True)
-
-                        res["code"] = 200
-                        res["msg"] = "上传成功"
-                        return res
-
+                    # 解压
+                    strPath = MyFileUtils.mapFileUnZip(zipPathAbs, firstImgFilePaths[0], mergePathAbs)
                 else:
                     res["code"] = 400
-                    res["msg"] = "请选择正确的地图类型进行合并"
+                    res["msg"] = "请上传正确的瓦片资源压缩包"
                     return res
-            else:
-                res["code"] = 400
-                res["msg"] = "请选择正确的地图类型进行合并"
-                return res
+            if len(delParentPath) != 0:
+                # 删除多余的层数
+                MyFileUtils.childFoldersUpParentPath(strPath + "\\" + delParentPath, True, True)
+            res["code"] = 200
+            res["msg"] = "上传成功"
+            return res
+        else:
+            # 错误
+            res["code"] = 400
+            res["msg"] = "请上传正确的瓦片资源压缩包"
+            return res
 
-        res["code"] = 200
-        res["msg"] = "上传成功"
     return res
 
 
