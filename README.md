@@ -18,9 +18,6 @@
 
 #### 界面展示
 
-![frontEnd](flaskr/static/frontEnd.png)
-
-
 原地址 https://blog.csdn.net/qq_45062700/article/details/137645483
 
 
