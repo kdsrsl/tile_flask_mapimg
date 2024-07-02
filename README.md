@@ -21,4 +21,8 @@
 ![frontEnd](flaskr/static/frontEnd.png)
 
 
-个人博客链接：https://blog.csdn.net/qq_45062700?type=blog
+原地址 https://blog.csdn.net/qq_45062700/article/details/137645483
+
+
+
+需部署在中转机，在线加载。

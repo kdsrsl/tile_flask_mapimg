@@ -10,7 +10,7 @@ global_zipTypes = [".zip", ".tar", ".tgz"]
 # global_customMapTypes = ["test1", "test2", "test3"]
 global_customMapTypes = []
 
-global_UPLOAD_CUSTOM_MAP_FOLDER = ".\\map\\customMap"
+global_UPLOAD_CUSTOM_MAP_FOLDER = "./map/customMap"
 
 global_mapList = {
     "data": {
@@ -56,6 +56,6 @@ global_mapURLhl = None
 global_mapURLgl = None
 global_mapURLHttpParameter = "&a=1&b=2"
 global_mapURLHeaders = None  # {"Content-Type":"application/json"}
-global_mapURLProxies = {"http": "http://127.0.0.1:1234"}
+global_mapURLProxies = {"http": "http://127.0.0.1:1087"}
 # global_customAlreadyMapType = ""
 # global_customAlreadyMapTypes = ["test1", "test2", "test3"]
